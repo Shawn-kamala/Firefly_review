@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Firefly: share your experience</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f1f0f8; --surface:#ffffff; --ink:#1c2040; --muted:#5b6082; --line:#d9d9ea;
+  --glow:#f2a900; --glow-soft:#ffd76a; --leaf:#2f7a55; --off:#c9cadd;
+  --hero-bg:#1c2040; --hero-ink:#f6f4ff;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#12142b; --surface:#1b1e3d; --ink:#eeecff; --muted:#a3a7cc; --line:#2d3160;
+    --glow:#ffc83d; --glow-soft:#ffe28f; --leaf:#6fd1a0; --off:#3b3f73;
+    --hero-bg:#0b0d20; --hero-ink:#f6f4ff; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12142b; --surface:#1b1e3d; --ink:#eeecff; --muted:#a3a7cc; --line:#2d3160;
+  --glow:#ffc83d; --glow-soft:#ffe28f; --leaf:#6fd1a0; --off:#3b3f73;
+  --hero-bg:#0b0d20; --hero-ink:#f6f4ff; color-scheme:dark;
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.6 "Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;margin:0;line-height:1.1;letter-spacing:-.02em}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--glow);outline-offset:3px;border-radius:4px}
+
+.hero{position:relative;overflow:hidden;background:var(--hero-bg);color:var(--hero-ink);padding:4.5rem 1.5rem 5rem}
+.hero-inner{position:relative;z-index:1;max-width:44rem;margin:0 auto}
+.hero h1{font-size:clamp(3rem,13vw,6.5rem);font-weight:800}
+.hero h1 span{color:var(--glow-soft);text-shadow:0 0 28px rgba(255,200,61,.55)}
+.hero p{font-size:1.15rem;max-width:32rem;margin:1.25rem 0 2rem;color:#d6d4ee}
+.btn{display:inline-block;background:var(--glow);color:#241a00;font:600 1rem "Instrument Sans",sans-serif;border:0;border-radius:999px;padding:.85rem 1.6rem;cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--glow-soft)}
+.fly{position:absolute;width:8px;height:8px;border-radius:50%;background:var(--glow-soft);box-shadow:0 0 14px 5px rgba(255,200,61,.6);opacity:0;animation:drift var(--d) ease-in-out var(--delay) infinite}
+@keyframes drift{
+  0%{opacity:0;transform:translate(0,0)}
+  15%{opacity:1} 50%{opacity:.35;transform:translate(var(--x),var(--y))}
+  70%{opacity:1} 100%{opacity:0;transform:translate(calc(var(--x)*-.6),calc(var(--y)*1.5))}
+}
+@media (prefers-reduced-motion:reduce){.fly{animation:none;opacity:.7}}
+
+main{max-width:44rem;margin:0 auto;padding:0 1.5rem}
+section{padding:3.5rem 0 0}
+h2{font-size:clamp(1.7rem,5vw,2.3rem);font-weight:800;margin-bottom:1.25rem}
+
+.features{display:grid;gap:1.75rem}
+.feat h3{font-size:1.3rem;font-weight:500;margin-bottom:.25rem}
+.feat p{margin:0;color:var(--muted);max-width:36rem}
+.feat{border-left:4px solid var(--glow);padding-left:1rem}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:1.5rem}
+label,legend{display:block;font-weight:600;margin-bottom:.4rem;padding:0}
+fieldset{border:0;margin:0 0 1.25rem;padding:0}
+input[type=text],select,textarea{width:100%;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:.7rem .85rem}
+textarea{min-height:7.5rem;resize:vertical}
+.field{margin-bottom:1.25rem}
+.hint{color:var(--muted);font-size:.9rem;margin:.35rem 0 0}
+
+.rate{display:flex;gap:.25rem}
+.rate button{background:none;border:0;padding:.3rem;cursor:pointer;line-height:0;border-radius:50%}
+.bug{width:34px;height:34px;display:block;transition:transform .15s}
+.bug .body{fill:var(--off)} .bug .tail{fill:var(--off)}
+.bug.on .tail{fill:var(--glow);filter:drop-shadow(0 0 5px var(--glow))}
+.bug.on .body{fill:var(--ink)}
+.rate button:hover .bug{transform:scale(1.15)}
+.rate-label{margin-left:.5rem;align-self:center;color:var(--muted);font-size:.95rem}
+.err{color:#c0392b;font-weight:600;min-height:1.4em;margin:.5rem 0 0}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .err{color:#ff8a7a}}
+
+.summary{display:flex;flex-wrap:wrap;align-items:center;gap:1rem 2rem;margin-bottom:1.5rem}
+.avg{font:800 3.2rem/1 "Bricolage Grotesque",sans-serif}
+.avg small{font:500 1rem "Instrument Sans",sans-serif;color:var(--muted)}
+.filters{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.25rem}
+.chip{font:500 .95rem "Instrument Sans",sans-serif;color:var(--ink);background:none;border:1px solid var(--line);border-radius:999px;padding:.4rem .95rem;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.review{padding:1.25rem 0;border-top:1px solid var(--line)}
+.review .top{display:flex;flex-wrap:wrap;gap:.25rem .75rem;align-items:baseline}
+.review b{font-size:1.05rem}
+.review .meta{color:var(--muted);font-size:.9rem}
+.mini{display:inline-flex;gap:2px;vertical-align:middle}
+.mini i{width:10px;height:10px;border-radius:50%;background:var(--off);display:block}
+.mini i.on{background:var(--glow);box-shadow:0 0 6px var(--glow)}
+.review p{margin:.5rem 0 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.empty{color:var(--muted);padding:1.5rem 0;border-top:1px solid var(--line)}
+.del{margin-top:.5rem;background:none;border:0;color:var(--muted);font:inherit;font-size:.9rem;text-decoration:underline;cursor:pointer;padding:0}
+
+.row{display:grid;gap:.35rem;margin-bottom:1rem}
+.row .lbl{display:flex;justify-content:space-between;gap:1rem;font-weight:500}
+.row .lbl em{font-style:normal;color:var(--muted);font-size:.9rem}
+.line{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.line button{height:28px;border:0;border-radius:6px;background:var(--off);cursor:pointer;padding:0}
+.line button.on{background:var(--glow);box-shadow:0 0 8px rgba(242,169,0,.5)}
+.line button:hover{filter:brightness(1.08)}
+.checks{display:flex;flex-wrap:wrap;gap:.5rem}
+.checks label{margin:0;font-weight:500}
+.checks input{position:absolute;opacity:0;pointer-events:none}
+.checks span{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:.45rem .95rem;cursor:pointer;background:var(--bg);user-select:none}
+.checks input:checked+span{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.checks input:focus-visible+span{outline:3px solid var(--glow);outline-offset:2px}
+.two{display:grid;gap:1rem}
+@media(min-width:560px){.two{grid-template-columns:1fr 1fr}}
+.sub{font-family:"Bricolage Grotesque",sans-serif;font-weight:500;font-size:1.2rem;margin:1.75rem 0 .9rem}
+.consent{display:flex;gap:.6rem;align-items:flex-start;font-weight:400}
+.consent input{margin-top:.35rem;accent-color:var(--glow)}
+.wa{display:inline-flex;align-items:center;gap:.5rem}
+footer{max-width:44rem;margin:4rem auto 0;padding:1.5rem;color:var(--muted);font-size:.9rem;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div id="flies" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <h1>Fire<span>fly</span></h1>
+    <p>Message the people you care about, see who is around, and keep your streaks alive. Tell us how it has been for you.</p>
+    <a class="btn" href="#write">Write a review</a>
+  </div>
+</header>
+
+<main>
+  <section aria-labelledby="what">
+    <h2 id="what">What you can review</h2>
+    <div class="features">
+      <div class="feat"><h3>Messaging</h3><p>Fast, simple chats with friends and groups.</p></div>
+      <div class="feat"><h3>Status view</h3><p>See what your friends are up to and share your own status.</p></div>
+      <div class="feat"><h3>Streaks</h3><p>Keep a daily streak going with the people who matter most.</p></div>
+    </div>
+  </section>
+
+  <section id="write" aria-labelledby="wt">
+    <h2 id="wt">Share your experience</h2>
+    <div class="panel">
+      <div class="two">
+        <div class="field"><label for="name">Your name</label><input type="text" id="name" maxlength="40" autocomplete="name" placeholder="Full name"></div>
+        <div class="field"><label for="phone">Phone number</label><input type="text" id="phone" maxlength="20" inputmode="tel" autocomplete="tel" placeholder="+254 7xx xxx xxx"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="device">Your phone</label><select id="device"><option>Android</option><option>iPhone</option><option>Other</option></select></div>
+        <div class="field"><label for="freq">How often do you use Firefly?</label><select id="freq"><option>Every day</option><option>A few times a week</option><option>Once a week</option><option>Rarely</option></select></div>
+      </div>
+
+      <div class="sub">Rate each part</div>
+      <div id="lines"></div>
+
+      <div class="sub">What do you like?</div>
+      <div class="checks" id="likes"></div>
+      <div class="sub">What needs work?</div>
+      <div class="checks" id="dislikes"></div>
+
+      <div class="sub">Overall</div>
+      <fieldset>
+        <legend>Overall rating</legend>
+        <div class="rate" id="rate" role="radiogroup" aria-label="Overall rating from 1 to 5"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Would you recommend Firefly to a friend?</legend>
+        <div class="checks" id="recommend"></div>
+      </fieldset>
+      <div class="field">
+        <label for="text">General overview of your experience</label>
+        <textarea id="text" maxlength="800" placeholder="Tell us what your experience has been like."></textarea>
+        <p class="hint"><span id="count">0</span> / 800</p>
+      </div>
+      <div class="field">
+        <label for="idea">One thing we should add or fix (optional)</label>
+        <input type="text" id="idea" maxlength="200">
+      </div>
+      <label class="consent"><input type="checkbox" id="consent" checked> <span>You may contact me on WhatsApp about this review.</span></label>
+      <p class="hint" style="margin:.75rem 0 1.25rem">Tapping Send opens WhatsApp with your review ready to send. You need to tap send inside WhatsApp for it to reach us.</p>
+      <button class="btn wa" id="submit" type="button">Send review on WhatsApp</button>
+      <p class="err" id="err" role="alert"></p>
+    </div>
+  </section>
+
+  <section aria-labelledby="rt">
+    <h2 id="rt">Reviews</h2>
+    <div class="summary" id="summary"></div>
+        <div id="list"></div>
+  </section>
+</main>
+
+<footer>Reviews you send are also kept in this browser so you can see them here. Clearing your browser data removes that copy.</footer>
+
+<script>
+(function(){
+  var KEY="firefly-reviews-v2", WA="254701396412";
+  var labels=["","Needs work","Okay","Good","Great","Love it"];
+  var parts=[["Messaging","Sending, receiving and chat features"],["Status view","Seeing and sharing statuses"],["Streaks","Keeping streaks going"],["App speed","How fast the app opens and loads"],["Design and ease of use","How the app looks and feels"]];
+  var likeOpts=["Clean design","Easy to use","Fast messages","Fun streaks","Status updates","Notifications","Privacy"];
+  var dislikeOpts=["Slow loading","Bugs or crashes","Notifications","Battery use","Missing features","Confusing screens","Nothing, all good"];
+  var recOpts=["Yes","Maybe","No"];
+  var scores={}, overall=0, recommend="", reviews=[];
+
+  // hero fireflies
+  var f=document.getElementById("flies");
+  for(var i=0;i<16;i++){var s=document.createElement("span");s.className="fly";
+    s.style.left=(Math.random()*96)+"%";s.style.top=(Math.random()*90)+"%";
+    s.style.setProperty("--x",(Math.random()*80-40)+"px");s.style.setProperty("--y",(Math.random()*-70)+"px");
+    s.style.setProperty("--d",(5+Math.random()*6)+"s");s.style.setProperty("--delay",(Math.random()*6)+"s");f.appendChild(s);}
+
+  function load(){try{var r=localStorage.getItem(KEY);reviews=r?JSON.parse(r):[];if(!Array.isArray(reviews))reviews=[];}catch(e){reviews=[];}}
+  function save(){try{localStorage.setItem(KEY,JSON.stringify(reviews));}catch(e){}}
+  function esc(x){return String(x).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+  // rating lines
+  var lines=document.getElementById("lines");
+  parts.forEach(function(p){
+    var row=document.createElement("div");row.className="row";
+    row.innerHTML='<div class="lbl"><span>'+p[0]+'</span><em data-t="'+p[0]+'">'+p[1]+'</em></div><div class="line" role="radiogroup" aria-label="'+p[0]+' rating"></div>';
+    var line=row.querySelector(".line");
+    for(var n=1;n<=5;n++){var b=document.createElement("button");b.type="button";b.setAttribute("role","radio");b.setAttribute("aria-label",p[0]+": "+n+" of 5, "+labels[n]);b.dataset.n=n;line.appendChild(b);}
+    line.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;scores[p[0]]=+b.dataset.n;
+      line.querySelectorAll("button").forEach(function(x){x.classList.toggle("on",+x.dataset.n<=scores[p[0]]);x.setAttribute("aria-checked",+x.dataset.n===scores[p[0]]);});
+      row.querySelector("em").textContent=labels[scores[p[0]]];});
+    lines.appendChild(row);
+  });
+
+  // chips
+  function chips(id,opts,type,name){var el=document.getElementById(id);
+    el.innerHTML=opts.map(function(o){return '<label><input type="'+type+'" name="'+name+'" value="'+o+'"><span>'+o+'</span></label>';}).join("");}
+  chips("likes",likeOpts,"checkbox","like");chips("dislikes",dislikeOpts,"checkbox","dis");chips("recommend",recOpts,"radio","rec");
+  document.getElementById("recommend").addEventListener("change",function(e){recommend=e.target.value;});
+  function checked(name){return Array.prototype.map.call(document.querySelectorAll('input[name="'+name+'"]:checked'),function(x){return x.value;});}
+
+  // overall fireflies
+  var bugSVG='<svg class="bug" viewBox="0 0 34 34" aria-hidden="true"><ellipse class="tail" cx="17" cy="23" rx="6.5" ry="8"/><ellipse class="body" cx="17" cy="11" rx="4.5" ry="5.5"/></svg>';
+  var rate=document.getElementById("rate");
+  for(var n=1;n<=5;n++){var b=document.createElement("button");b.type="button";b.setAttribute("role","radio");b.setAttribute("aria-label",n+" of 5: "+labels[n]);b.dataset.n=n;b.innerHTML=bugSVG;rate.appendChild(b);}
+  var rl=document.createElement("span");rl.className="rate-label";rate.appendChild(rl);
+  function paint(){rate.querySelectorAll("button").forEach(function(x){var on=+x.dataset.n<=overall;x.firstChild.classList.toggle("on",on);x.setAttribute("aria-checked",+x.dataset.n===overall);});rl.textContent=labels[overall]||"";}
+  rate.addEventListener("click",function(e){var b=e.target.closest("button");if(!b)return;overall=+b.dataset.n;paint();});
+
+  var text=document.getElementById("text"),count=document.getElementById("count"),err=document.getElementById("err");
+  text.addEventListener("input",function(){count.textContent=text.value.length;});
+  function v(id){return document.getElementById(id).value.trim();}
+
+  function stars(n){return n+"/5";}
+
+  document.getElementById("submit").addEventListener("click",function(){
+    var name=v("name"),phone=v("phone"),digits=phone.replace(/\D/g,"");
+    if(!name){err.textContent="Enter your name.";return;}
+    if(digits.length<7){err.textContent="Enter a valid phone number so we can reach you.";return;}
+    var missing=parts.filter(function(p){return !scores[p[0]];}).map(function(p){return p[0];});
+    if(missing.length){err.textContent="Rate each part of the app. Still missing: "+missing.join(", ")+".";return;}
+    if(!overall){err.textContent="Choose an overall rating.";return;}
+    if(v("text").length<10){err.textContent="Write a short overview of your experience.";return;}
+
+    var r={id:Date.now(),name:name,phone:phone,device:v("device"),freq:v("freq"),scores:Object.assign({},scores),likes:checked("like"),dislikes:checked("dis"),overall:overall,recommend:recommend,text:v("text"),idea:v("idea"),contact:document.getElementById("consent").checked,date:new Date().toLocaleDateString(undefined,{year:"numeric",month:"short",day:"numeric"})};
+    var m=["*New Firefly review*","","*Name:* "+r.name,"*Phone:* "+r.phone,"*Device:* "+r.device,"*Usage:* "+r.freq,"","*Overall:* "+stars(r.overall)+" ("+labels[r.overall]+")","*Would recommend:* "+(r.recommend||"Not answered"),"","*Ratings*"];
+    parts.forEach(function(p){m.push("- "+p[0]+": "+stars(r.scores[p[0]]));});
+    m.push("","*Likes:* "+(r.likes.join(", ")||"None selected"),"*Needs work:* "+(r.dislikes.join(", ")||"None selected"),"","*Overview:* "+r.text);
+    if(r.idea)m.push("","*Add or fix:* "+r.idea);
+    m.push("","*OK to contact on WhatsApp:* "+(r.contact?"Yes":"No"));
+    var url="https://wa.me/"+WA+"?text="+encodeURIComponent(m.join("\n"));
+
+    reviews.unshift(r);save();err.textContent="";render();
+    var a=document.createElement("a");a.href=url;a.target="_blank";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();
+    err.style.color="var(--leaf)";err.textContent="Review saved. If WhatsApp did not open, tap here to send it.";
+    err.onclick=function(){window.open(url,"_blank","noopener");};err.style.cursor="pointer";
+    setTimeout(function(){err.style.color="";},0);
+  });
+
+  function mini(n){var h='<span class="mini" role="img" aria-label="'+n+' out of 5">';for(var i=1;i<=5;i++)h+='<i class="'+(i<=n?"on":"")+'"></i>';return h+"</span>";}
+
+  function render(){
+    var avg=reviews.length?reviews.reduce(function(a,r){return a+r.overall;},0)/reviews.length:0;
+    document.getElementById("summary").innerHTML=reviews.length?'<div class="avg">'+avg.toFixed(1)+' <small>out of 5</small></div><div>'+mini(Math.round(avg))+'<div style="color:var(--muted);font-size:.9rem">'+reviews.length+' review'+(reviews.length===1?"":"s")+' on this device</div></div>':'';
+    var list=document.getElementById("list");
+    if(!reviews.length){list.innerHTML='<div class="empty">No reviews yet. Be the first to write one above.</div>';return;}
+    list.innerHTML=reviews.map(function(r){
+      return '<article class="review"><div class="top"><b>'+esc(r.name)+'</b>'+mini(r.overall)+'<span class="meta">'+esc(r.date)+'</span></div><p>'+esc(r.text)+'</p><button class="del" type="button" data-id="'+r.id+'">Delete</button></article>';
+    }).join("");
+  }
+  document.getElementById("list").addEventListener("click",function(e){var d=e.target.closest(".del");if(!d)return;reviews=reviews.filter(function(r){return String(r.id)!==d.dataset.id;});save();render();});
+
+  load();render();paint();
+})();
+</script>
+</body>
+</html>
